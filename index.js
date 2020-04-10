@@ -1,3 +1,4 @@
+
 const express = require('express')
 const app = express();
 const morgan = require('morgan')
@@ -20,11 +21,7 @@ app.use(morgan((tokens, req, res)=>{
 
 let phonebook = [  ]
 
-app.listen(3000, () =>{
 
-    console.log('Server is running ')
-    
-})
 
 
 app.get('/', (req, res) =>{
@@ -128,4 +125,5 @@ const PORT = process.env.PORT || 3001
 app.listen(PORT, ()=>{
     console.log('server is running')
 })
+
 
