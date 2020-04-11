@@ -1,10 +1,11 @@
-
 const express = require('express')
 const app = express();
 const morgan = require('morgan')
 const cors = require('cors')
 
 app.use(cors())
+app.use(express.static('build'))
+
 app.use(express.json())
 app.use(morgan((tokens, req, res)=>{
 
@@ -23,8 +24,7 @@ let phonebook = [  ]
 
 
 
-
-app.get('/', (req, res) =>{
+app.get('/init', (req, res) =>{
 
     res.json(phonebook)
 
@@ -120,10 +120,7 @@ app.delete('/api/persons/:id', (req, res) =>{
 })
 
 
-
 const PORT = process.env.PORT || 3001
-app.listen(PORT, ()=>{
-    console.log('server is running')
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
 })
-
-
