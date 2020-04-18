@@ -1,6 +1,8 @@
+require('dotenv').config()
 const express = require('express')
 const app = express();
 const morgan = require('morgan')
+const Contact = require('./models/contact')
 const cors = require('cors')
 
 app.use(cors())
@@ -20,105 +22,128 @@ app.use(morgan((tokens, req, res)=>{
 
 }))
 
-let phonebook = [  ]
-
-
 
 app.get('/init', (req, res) =>{
 
-    res.json(phonebook)
+
+    Contact.find({}).then(contacts =>{
+        console.log(contacts)
+        res.json(contacts.map(contact =>contact.toJSON()))
+
+    })
+    .catch(error =>{
+
+        console.log(error)
+        response.status(500).send({error : 'Data could not be intialised'})
+
+    })
+
+ 
 
 })
 
 
 app.get('/info', (req, res) =>{
 
-    res.send(`<p> Phone book has info for ${phonebook.length} people` )
+    Contact.countDocuments({}, (err, count) =>{
+    
+        res.send(`<p> Phone book has info for ${count} people` )
+
+
+    }).catch(error =>{
+
+        console.log(error)
+        response.status(400).send({error : 'ID does not exist'})
+
+    })
+
+
 
 })
 
 
 app.post('/api/persons/', (req, res) =>{
     
-    let userExists = false;
     const name = req.body.name
-    const number = req.body.number
+    const phoneNumber = req.body.number
 
-    if(name === undefined || number=== undefined){
+    if(name === undefined || phoneNumber=== undefined){
 
         return res.status(400).json({
             error: 'Provide name or number'
         })
 
-
     }
 
-    phonebook.forEach((person)=>{
+    const contact = new Contact({
+        name: name,
+        number: phoneNumber,
+    })
 
-        if(person.name === name){
-          
-            userExists = true;
+    contact.save().then(response =>{
 
-            return res.status(400).json({
-                error: 'Person already exists'
-            })
-
-        }
+        console.log(response + ' Data has been saved to database')
         
+    }).then(() =>{
+
+         res.json(contact)
+   
     })
 
 
-    if(!userExists){
+   
 
-        const person = {
-            id : Math.floor((Math.random()*Number.MAX_SAFE_INTEGER) + 1) ,
-            name : req.body.name,
-            number : req.body.number
-        }
-
-        phonebook = phonebook.concat(person)
-
-        
-       
-        res.json(person)
-
-    }
 })
 
 
 app.get('/api/persons/:id' , (req, res)=>{
 
-    const id = Number(req.params.id) //Params comes up as String
+    const id = req.params.id 
 
-    const person = phonebook.find(person => person.id === id)
+    Contact.find({_id : id}).then(response =>{
 
-    console.log(id)
 
-    if(person !== undefined){
+        if(response !== undefined){
 
-        res.json(person)
+            res.json(response)
 
-    } else {
+        } else {
 
-        return res.status(400).json({
-            error: 'Person missing, name must be unique'
-        })
+            return res.status(400).json({
+             error: 'Person missing'
+            })
 
-    }
+        }
+
+     })
 
 })
 
 
 app.delete('/api/persons/:id', (req, res) =>{
 
-    const id = Number(req.params.id)
+    const id = req.params.id
 
-    phonebook = phonebook.filter(person =>person.id !== id)
-   console.log(phonebook)
-    res.json(phonebook)
+    Contact.findOneAndRemove({_id: id}, (error)=>{
+
+        if(!error){
+            console.log('Contact with ID '  + id + ' has been deleted ')
+        } else{
+            console.log('User did not delete')
+        }
+
+    }).then(() =>{
+
+        Contact.find({}).then(contacts =>{
+                console.log(contacts)
+                res.json(contacts.map(contact =>contact.toJSON()))
+
+        })
+
+    })
+
 
 })
-
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
