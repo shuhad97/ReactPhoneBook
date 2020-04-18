@@ -53,7 +53,7 @@ app.get('/info', (req, res) =>{
     }).catch(error =>{
 
         console.log(error)
-        response.status(400).send({error : 'ID does not exist'})
+        response.status(500).send({error : 'Data could not be retrieved'})
 
     })
 
@@ -115,7 +115,13 @@ app.get('/api/persons/:id' , (req, res)=>{
 
         }
 
-     })
+     }).catch(error =>{
+
+        console.log(error)
+        response.status(500).send({error : 'ID does not exist'})
+
+    })
+
 
 })
 
@@ -138,7 +144,13 @@ app.delete('/api/persons/:id', (req, res) =>{
                 console.log(contacts)
                 res.json(contacts.map(contact =>contact.toJSON()))
 
+        }).catch(error =>{
+
+            console.log(error)
+            response.status(400).send({error : 'Contact could not be found'})
+    
         })
+    
 
     })
 
