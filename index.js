@@ -1,10 +1,10 @@
 require('dotenv').config()
 const express = require('express')
 const app = express();
+
 const morgan = require('morgan')
 const Contact = require('./models/contact')
 const cors = require('cors')
-
 app.use(cors())
 app.use(express.static('build'))
 
@@ -90,8 +90,12 @@ app.post('/api/persons/', (req, res) =>{
    
     })
 
+})
 
-   
+app.put('/api/persons', (req, res) =>{
+
+    
+
 
 })
 
