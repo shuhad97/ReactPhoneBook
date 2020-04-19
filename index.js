@@ -25,21 +25,8 @@ app.use(morgan((tokens, req, res)=>{
 
 app.get('/init', (req, res) =>{
 
-
-    Contact.find({}).then(contacts =>{
-        console.log(contacts)
-        res.json(contacts.map(contact =>contact.toJSON()))
-
-    })
-    .catch(error =>{
-
-        console.log(error)
-        response.status(500).send({error : 'Data could not be intialised'})
-
-    })
-
- 
-
+    returnAll(res)
+   
 })
 
 
@@ -92,9 +79,21 @@ app.post('/api/persons/', (req, res) =>{
 
 })
 
-app.put('/api/persons', (req, res) =>{
-
+app.put('/api/persons/', (req, res) =>{
+   
+    const id = req.body.id
     
+    const updateNumber = {
+      number :  req.body.number
+    }
+
+    Contact.findOneAndUpdate({_id: id}, updateNumber)
+    .then(() =>{
+        
+        returnAll(res)
+
+
+    }) 
 
 
 })
@@ -160,6 +159,21 @@ app.delete('/api/persons/:id', (req, res) =>{
 
 
 })
+
+const returnAll = (res) =>{
+
+    Contact.find({}).then(contacts =>{
+        console.log(contacts)
+        res.json(contacts.map(contact =>contact.toJSON()))
+
+    })
+    .catch(error =>{
+
+        console.log(error)
+        response.status(500).send({error : 'Data could not be intialised'})
+
+    })
+}
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
