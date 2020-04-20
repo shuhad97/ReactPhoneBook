@@ -40,7 +40,7 @@ app.get('/info', (req, res) =>{
     }).catch(error =>{
 
         console.log(error)
-        response.status(500).send({error : 'Data could not be retrieved'})
+        res.status(500).send({error : 'Data could not be retrieved'})
 
     })
 
@@ -69,12 +69,18 @@ app.post('/api/persons/', (req, res) =>{
 
     contact.save().then(response =>{
 
+        if(reponse){
         console.log(response + ' Data has been saved to database')
-        
+        }
     }).then(() =>{
 
          res.json(contact)
    
+    }).catch((err) =>{
+        
+        res.status(500).send({error : err})
+
+
     })
 
 })
@@ -121,7 +127,7 @@ app.get('/api/persons/:id' , (req, res)=>{
      }).catch(error =>{
 
         console.log(error)
-        response.status(500).send({error : 'ID does not exist'})
+        res.status(500).send({error : 'ID does not exist'})
 
     })
 
@@ -150,7 +156,7 @@ app.delete('/api/persons/:id', (req, res) =>{
         }).catch(error =>{
 
             console.log(error)
-            response.status(400).send({error : 'Contact could not be found'})
+            res.status(400).send({error : 'Contact could not be found'})
     
         })
     
@@ -170,7 +176,7 @@ const returnAll = (res) =>{
     .catch(error =>{
 
         console.log(error)
-        response.status(500).send({error : 'Data could not be intialised'})
+        res.status(500).send({error : 'Data could not be intialised'})
 
     })
 }
