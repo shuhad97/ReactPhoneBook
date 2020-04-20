@@ -67,21 +67,21 @@ app.post('/api/persons/', (req, res) =>{
         number: phoneNumber,
     })
 
-    contact.save().then(response =>{
+    contact.save((err, contact)=>{
 
-        if(reponse){
-        console.log(response + ' Data has been saved to database')
+        if(err){
+            console.log(err)
+            res.send(500, 'err')
+        } else{
+
+            console.log('Contact has been saved')
+            res.json(contact)
+
         }
-    }).then(() =>{
-
-         res.json(contact)
-   
-    }).catch((err) =>{
-        
-        res.status(500).send({error : err})
-
 
     })
+
+      
 
 })
 
